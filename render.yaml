@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: hukam-image-generations
+    env: node
+    plan: free
+    buildCommand: ./build.sh
+    startCommand: npm start
+    healthCheckPath: /
+    rootDir: ./
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        value: postgresql://ai_image_db_4l1h_user:vsuXTVGZDtgAAiUYYfaBY85mfKpLbkrE@dpg-d1qf0q3uibrs73elds00-a.oregon-postgres.render.com/ai_image_db_4l1h
+      - key: TOGETHER_AI_KEY_1
+        value: 30007227e495131a87c70d558f56cd54d212c47ab94221f2299e11da832b3166
+      - key: TOGETHER_AI_KEY_2
+        value: 34b44ff37f5f56048ae0475f4acafc05bb8a252c23a2c5797300e166aa5b31d9
+      - key: TOGETHER_AI_KEY_3
+        value: 1d4fb6b33893281cb45c2107ebf4a49744497902500e23a35ef63837d93dcac3
+      - key: TOGETHER_AI_KEY_4
+        value: dadc74fda1176aa1ab68c129b7cf9805e2f5b3e82fc7c81124db24214133d8f6
