@@ -1,0 +1,211 @@
+ Rebuild a full-stack AI image generation web app named **Hukam Image Generations** using React (frontend) and Node.js + Express (backend). The goal is to replicate my previously working Replit app with all final working features included, error-free, and scalable. I have uploaded the ZIP from my old Replit project.
+
+---
+
+✅ CORE PURPOSE:
+A frontend React app that sends prompt(s) to the backend. The backend:
+- Uses Together AI's Flux model via multiple API keys (multi-key rotation)
+- Calls the image generation endpoint
+- Fetches images and sends them back
+- Frontend displays and allows downloads individually or in a ZIP
+
+---
+
+### 📦 TECH STACK
+
+- React (Vite or CRA)
+- Node.js + Express (in `/server`)
+- JSZip and file-saver for downloading images as ZIP
+- axios or fetch for HTTP requests
+- LocalStorage to persist settings (API key, prompt history)
+
+---
+
+### 🔑 TOGETHER AI API DETAILS
+
+**Endpoint:** `https://api.together.xyz/v1/images/generations`
+
+**Required Fields:**
+```json
+{
+  "model": "black-forest-labs/FLUX.1-schnell-Free",
+  "prompt": "<string>",
+  "width": 768,
+  "height": 768,
+  "steps": 4,
+  "n": <1-10>
+}
+❗Note: steps must be between 1–4. Older code had steps: 28, which is invalid and must be corrected.
+
+🌐 BACKEND (/server)
+🧠 Create:
+
+server/together-ai-service.ts with multi-key support
+
+✅ Features:
+
+Four Together AI API keys stored in an array
+
+Round-robin selection of keys per request
+
+Retry logic: if a key fails (rate limit, error), try next one
+
+Cooldown system: if a key fails repeatedly, skip it for 60 seconds
+
+Timeout of 30s per API request
+
+Logs which key was used per generation
+
+📁 API Endpoints:
+
+ts
+Copy
+Edit
+POST /api/generate-image     → Calls Together API using multi-key system
+GET /api/api-key-status      → Returns key usage/failure data
+POST /api/reset-api-keys     → Resets cooldown/failure counters
+GET /api/proxy-image?url=... → Downloads image from external URL (CORS bypass)
+⚙️ CORS:
+
+Use cors npm package
+
+Allow frontend (e.g. localhost:3000 or vite) to access API
+
+💻 FRONTEND (React)
+🧠 UI Features:
+
+🔹 Prompt Input
+Large multi-line textarea (accepts 500–1000 prompts)
+
+Drag & drop .txt file (each line becomes a prompt)
+
+“Surprise Me” button generates a fun prompt
+
+Prompt Templates dropdown: e.g. A [adjective] [animal] in [style] style
+
+🔹 Controls
+Select number of images per prompt (1–10)
+
+“Generate Images” button
+
+“Download All” (ZIP) button
+
+View toggle: Grid / List
+
+Dark / Light mode toggle
+
+Show current prompt as label above generated image
+
+🔹 Progress & UX
+Generates prompts sequentially (one prompt at a time)
+
+Waits 20 seconds between each prompt (to respect Together AI's 3 RPM limit)
+
+Shows:
+
+"Generating Prompt X of Y"
+
+Countdown timer between prompts
+
+Retry message if rate limit hit (⏳ Waiting 60 seconds to retry…)
+
+Final alert: “⚠️ Server busy. Try again later.” if 3+ prompts fail
+
+🔹 Prompt History
+Stores last 100 prompts in localStorage
+
+History panel to reuse/edit/delete prompts
+
+📥 DOWNLOAD SYSTEM
+✅ "Download All" Logic:
+
+Uses JSZip to collect all image files into a single ZIP
+
+Flat file names like:
+
+sunflower_girl_1.png
+
+robotic_cat_2.png
+
+✅ NO folders/subdirectories
+
+✅ Images fetched via backend proxy to bypass CORS (/api/proxy-image?url=...)
+
+✅ Prompt used to generate filename (sanitize all symbols/spaces)
+
+✅ Individual Download Button:
+
+Each image has its own “Download” button
+
+🎨 UI/UX DESIGN
+Modern glassmorphism theme
+
+Soft gradients, rounded corners, shadows
+
+Fully responsive (mobile + desktop)
+
+Elegant font
+
+Gentle hover and transition effects
+
+UI text should not truncate prompt (wrap instead of "...")
+
+Show full prompt below each image (tooltip optional)
+
+🔐 USER SETTINGS
+✅ API Key Panel:
+
+Users can:
+
+Enter and save their own API key (stored in localStorage)
+
+View active key (hidden by default)
+
+Reset to default key
+
+Settings button in header or sidebar
+
+🚫 FIX THESE KNOWN ISSUES FROM OLD PROJECT
+❌ Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+✅ Fix: Make sure all backend endpoints return JSON via res.json(), not HTML
+
+❌ steps: 28
+✅ Fix: Use steps: 4 (max for FLUX.1-schnell-Free)
+
+❌ Empty folders in ZIP
+✅ Fix: Use backend proxy to fetch external image URLs properly (CORS-safe)
+
+❌ Prompt gets truncated in UI
+✅ Fix: Let prompt text wrap fully, no ellipsis
+
+🧪 TESTING SCENARIOS
+Test the following before deployment:
+
+Bulk prompt generation (10+ prompts)
+
+Prompt with special characters or long sentences
+
+All download buttons (ZIP and individual)
+
+Retry behavior on API failure
+
+Rate limit enforcement (only 3 prompts/min)
+
+Proxy fetch and CORS handling
+
+🔄 POST-INSTALL DEPENDENCIES
+✅ Install in frontend:
+
+bash
+Copy
+Edit
+npm install jszip file-saver
+✅ Install in backend:
+
+bash
+Copy
+Edit
+npm install axios express cors
+✅ Project structure:
+
+pg...

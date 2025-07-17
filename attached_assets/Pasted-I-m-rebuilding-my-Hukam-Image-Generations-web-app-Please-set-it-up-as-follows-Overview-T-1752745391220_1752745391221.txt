@@ -1,0 +1,46 @@
+I’m rebuilding my Hukam Image Generations web app. Please set it up as follows:
+
+🧠 Overview:
+- This is a full-stack AI image generation app using Together AI (Flux model)
+- Built with React (frontend) and Node.js + Express (backend)
+- Uses multiple Together AI API keys with round-robin + failover logic
+- Images are generated via backend and downloaded from URLs (CORS bypassed using proxy)
+
+✅ Backend Setup:
+1. In `server/together-ai-service.ts`, implement multi-API key round-robin system with cooldown and retries (4 keys total).
+2. Expose POST `/api/generate-image` for image generation.
+3. Add GET `/api/api-key-status` and POST `/api/reset-api-keys` for monitoring keys.
+4. Add GET `/api/proxy-image?url=` endpoint to fetch image via backend (bypasses CORS).
+5. Ensure all API calls return proper JSON responses — not HTML.
+
+🛠 Sample Backend Fix:
+- If any endpoint fails, it should `res.status(500).json({ error })` instead of sending HTML.
+- Add `app.use(express.json())` and proper CORS setup.
+
+✅ Frontend Setup:
+1. Use React with modern glassmorphism design.
+2. Call backend `/api/generate-image` instead of direct Together API.
+3. Allow user to set custom API key (saved in localStorage).
+4. Generate up to 500 prompts with 20-second delay between prompts.
+5. Retry failed prompts with 60-second wait if rate limited.
+6. Download All ZIP button:
+   - Fetch all images via `/api/proxy-image?url=<image_url>`
+   - Use JSZip to zip images with flat filenames: `prompt_1.png`, `prompt_2.png`
+   - No folders in ZIP
+
+📦 Libraries:
+- Frontend: React, JSZip, file-saver
+- Backend: Express, axios, cors
+- Run frontend on `/` and backend routes on `/api/*`
+
+🔑 Together AI Flux model details:
+- Endpoint: `https://api.together.xyz/v1/images/generations`
+- Model: `black-forest-labs/FLUX.1-schnell-Free`
+- Required fields: prompt, width: 768, height: 768, steps: 4, n: 1–10
+
+⚠️ Important:
+Fix the bug: `"Unexpected token '<',..."` by making sure all backend endpoints return valid JSON.
+Make sure `/api/generate-image` returns `{ imageUrl, usedApiKey }`.
+
+✅ Final Goal:
+A working, tested full-stack AI image generation app called **Hukam Image Generations**, ready to run on a new Replit account with no errors.
