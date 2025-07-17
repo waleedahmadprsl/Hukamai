@@ -103,7 +103,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       response.data.pipe(res);
     } catch (error: any) {
       console.error("Error proxying image:", error);
-      res.status(500).json({ error: "Failed to proxy image" });
+      
+      if (error.response?.status === 404) {
+        // Return a placeholder image or error message for 404s
+        res.status(404).json({ error: "Image not found" });
+      } else {
+        res.status(500).json({ error: "Failed to proxy image" });
+      }
     }
   });
 
@@ -128,6 +134,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Error fetching prompt history:", error);
       res.status(500).json({ error: "Failed to fetch prompt history" });
+    }
+  });
+
+  // Clear All Data
+  app.delete("/api/clear-all-data", async (req, res) => {
+    try {
+      await storage.clearAllData();
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Error clearing all data:", error);
+      res.status(500).json({ error: "Failed to clear all data" });
     }
   });
 

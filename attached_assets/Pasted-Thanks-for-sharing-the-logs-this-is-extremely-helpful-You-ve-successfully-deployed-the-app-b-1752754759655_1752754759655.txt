@@ -1,0 +1,97 @@
+Thanks for sharing the logs — this is **extremely helpful**. You’ve successfully deployed the app, but here’s the **root issue**:
+
+---
+
+## ❌ Root Error
+
+```bash
+Error: connect ETIMEDOUT 35.227.164.209:443
+```
+
+You're hitting a **network timeout** when your backend tries to connect to the Neon PostgreSQL database via WebSocket:
+
+```bash
+wss://dpg-d1qf0q3uibrs73elds00-a.oregon-postgres.render.com/v2
+```
+
+---
+
+## 🧠 What’s Happening?
+
+Your app is using the **Neon Serverless driver**, which connects to the database via **WebSockets** (wss).
+But **Render's free tier** often **blocks or times out WebSocket outbound connections** — or the network latency is just high, especially to external DBs like Neon.
+
+---
+
+## ✅ Solution Options
+
+---
+
+### ✅ Option 1: **Switch to Neon’s HTTPS Connection**
+
+If you're using the Neon Serverless client like:
+
+```ts
+import { Pool } from "@neondatabase/serverless";
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+```
+
+**Change it** to Neon’s HTTP-based driver OR switch to standard `pg` driver if WebSockets are unreliable.
+
+---
+
+### ✅ Option 2: **Use Standard `pg` Driver**
+
+Instead of the WebSocket client (`@neondatabase/serverless`), switch to:
+
+```bash
+npm install pg
+```
+
+Then update your connection code to:
+
+```ts
+import { Pool } from 'pg';
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false, // for Neon
+  }
+});
+```
+
+That avoids WebSockets entirely and works better on platforms like Render.
+
+---
+
+### ✅ Option 3: **Check Render Network Settings (Pro plan)**
+
+If you are on Render’s **free tier**, outbound WebSocket reliability is limited.
+
+To use Neon Serverless reliably:
+
+* Use **Render Pro plan** (where outbound socket traffic is more stable)
+* OR **host the database on Render** (e.g. PostgreSQL addon)
+
+---
+
+### ✅ Bonus: Add Error Handling
+
+Add this in your DB init file so failures don't crash the entire server:
+
+```ts
+pool.connect().catch(err => {
+  console.error('❌ Failed to connect to DB:', err.message);
+});
+```
+
+---
+
+## 🧪 Quick Fix to Try
+
+1. Switch from `@neondatabase/serverless` to `pg`
+2. Update connection string if needed
+3. Redeploy
+
+Let me know if you'd like the updated DB connection code or `.env` structure!

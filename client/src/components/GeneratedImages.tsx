@@ -65,12 +65,33 @@ export default function GeneratedImages({ images }: GeneratedImagesProps) {
   };
 
   return (
-    <Card className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl">
+    <Card className="backdrop-blur-lg bg-white/10 dark:bg-white/10 border border-white/20 rounded-2xl">
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-white">Generated Images</h2>
+          <h2 className="text-xl font-semibold text-white dark:text-white">Generated Images</h2>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-400">{images.length} images generated</span>
+            
+            {/* View Mode Toggle */}
+            <div className="flex items-center space-x-2">
+              <Button
+                onClick={() => setViewMode("grid")}
+                variant={viewMode === "grid" ? "default" : "ghost"}
+                size="sm"
+                className="backdrop-blur-lg bg-white/10 border border-white/20 hover:bg-white/20 transition-all duration-300"
+              >
+                <Grid className="h-4 w-4" />
+              </Button>
+              <Button
+                onClick={() => setViewMode("list")}
+                variant={viewMode === "list" ? "default" : "ghost"}
+                size="sm"
+                className="backdrop-blur-lg bg-white/10 border border-white/20 hover:bg-white/20 transition-all duration-300"
+              >
+                <List className="h-4 w-4" />
+              </Button>
+            </div>
+            
             <Button
               onClick={handleDownloadAll}
               disabled={isDownloading || images.length === 0}

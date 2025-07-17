@@ -2,7 +2,7 @@
 
 ## Overview
 
-Hukam Image Generations is a full-stack AI image generation web application that leverages the Together AI Flux model to create high-quality images from text prompts. The application features a modern glassmorphism design with soft colors, built using React for the frontend and Node.js/Express for the backend. The application is configured for deployment on Render.com with external PostgreSQL database integration.
+Hukam Image Generations is a full-stack AI image generation web application that leverages the Together AI Flux model to create high-quality images from text prompts. The application features a modern glassmorphism design with soft colors and dual theme support (light/dark mode), built using React for the frontend and Node.js/Express for the backend. The application is configured for deployment on Render.com with external PostgreSQL database integration.
 
 ## User Preferences
 
@@ -22,6 +22,7 @@ Preferred communication style: Simple, everyday language.
 - **Runtime**: Node.js with Express.js framework
 - **Database**: PostgreSQL with Drizzle ORM for type-safe database operations
 - **Database Provider**: Render PostgreSQL (external database with SSL support)
+- **Database Driver**: Standard `pg` driver (switched from Neon serverless for better Render compatibility)
 - **API Structure**: RESTful API with JSON responses
 - **Session Management**: PostgreSQL-backed sessions using connect-pg-simple
 - **Development**: Hot reload with Vite middleware integration
@@ -48,6 +49,8 @@ Preferred communication style: Simple, everyday language.
 - **Image Gallery**: Grid and list view modes for generated images
 - **Download System**: Individual image downloads and bulk ZIP downloads
 - **Settings Panel**: Custom API key configuration and preferences
+- **Theme Support**: Light/dark mode toggle with smooth transitions
+- **Data Management**: Clear all data functionality for generated images and prompt history
 
 ## Data Flow
 
@@ -100,3 +103,28 @@ Preferred communication style: Simple, everyday language.
 - **Type Safety**: Shared schema types between frontend and backend
 
 The application is designed to be easily deployable on platforms like Replit, with automatic database provisioning and minimal configuration required.
+
+## Recent Changes (January 2025)
+
+### Database Connection Fix
+- **Issue**: WebSocket connection timeouts when using Neon serverless driver on Render
+- **Solution**: Switched from `@neondatabase/serverless` to standard `pg` driver
+- **Impact**: Improved reliability for Render deployment with external PostgreSQL
+- **Date**: January 17, 2025
+
+### Theme System Implementation
+- **Feature**: Added complete light/dark mode toggle functionality
+- **Implementation**: ThemeProvider with localStorage persistence and smooth transitions
+- **UI Updates**: Proper color variables and theme-aware styling throughout
+- **Date**: January 17, 2025
+
+### Data Management Enhancement
+- **Feature**: Added clear all data functionality
+- **Implementation**: Backend endpoint to clear generated images and prompt history
+- **UI**: Trash button in header with confirmation dialog
+- **Date**: January 17, 2025
+
+### View Mode Functionality
+- **Fix**: Restored grid/list view toggle buttons in image gallery
+- **Implementation**: Working view mode switching between grid and list layouts
+- **Date**: January 17, 2025

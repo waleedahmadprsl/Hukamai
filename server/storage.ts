@@ -34,6 +34,9 @@ export interface IStorage {
   // Prompt History
   addPromptToHistory(prompt: InsertPromptHistory): Promise<PromptHistory>;
   getPromptHistory(limit?: number): Promise<PromptHistory[]>;
+  
+  // Clear All Data
+  clearAllData(): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -128,6 +131,12 @@ export class DatabaseStorage implements IStorage {
       .from(promptHistory)
       .orderBy(desc(promptHistory.usedAt))
       .limit(limit);
+  }
+
+  async clearAllData(): Promise<void> {
+    // Clear generated images and prompt history
+    await db.delete(generatedImages);
+    await db.delete(promptHistory);
   }
 }
 

@@ -1,9 +1,8 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
-import * as schema from "@shared/schema";
+import pg from 'pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
 
-neonConfig.webSocketConstructor = ws;
+const { Pool } = pg;
+import * as schema from "@shared/schema";
 
 // Use the Render PostgreSQL database URL if provided, otherwise use Replit's DATABASE_URL
 const databaseUrl = process.env.DATABASE_URL;
@@ -17,7 +16,13 @@ if (!databaseUrl) {
 export const pool = new Pool({ 
   connectionString: databaseUrl,
   ssl: {
-    rejectUnauthorized: false // Required for Render PostgreSQL
+    rejectUnauthorized: false // Required for external PostgreSQL connections
   }
 });
+
+// Add connection error handling
+pool.on('error', (err) => {
+  console.error('Database connection error:', err);
+});
+
 export const db = drizzle({ client: pool, schema });
