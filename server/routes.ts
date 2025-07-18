@@ -116,7 +116,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get Generated Images
   app.get("/api/generated-images", async (req, res) => {
     try {
-      const limit = parseInt(req.query.limit as string) || 100;
+      const limit = parseInt(req.query.limit as string) || 100000;
       const images = await storage.getGeneratedImages(limit);
       res.json({ images });
     } catch (error: any) {
@@ -128,7 +128,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get Prompt History
   app.get("/api/prompt-history", async (req, res) => {
     try {
-      const limit = parseInt(req.query.limit as string) || 100;
+      const limit = parseInt(req.query.limit as string) || 100000;
       const history = await storage.getPromptHistory(limit);
       res.json({ history });
     } catch (error: any) {
