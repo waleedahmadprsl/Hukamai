@@ -161,17 +161,17 @@ export default function PromptInput({
 
           toast({
             title: "Rate limit hit",
-            description: "⏳ Waiting 60 seconds to retry...",
+            description: "⏳ Waiting 20 seconds to retry...",
             variant: "destructive",
           });
           
           // Wait 60 seconds before retry
-          await new Promise(resolve => setTimeout(resolve, 60000));
+          await new Promise(resolve => setTimeout(resolve, 20000));
         }
 
         // Wait 20 seconds between images (except for the last image)
         if (j < imagesCount - 1 && !abortControllerRef.current?.signal.aborted) {
-          for (let countdown = 20; countdown > 0; countdown--) {
+          for (let countdown = 3; countdown > 0; countdown--) {
             setGenerationProgress(prev => ({
               ...prev,
               timeRemaining: countdown,
@@ -183,7 +183,7 @@ export default function PromptInput({
 
       // Wait 20 seconds between prompts (except for the last prompt)
       if (i < promptList.length - 1 && !abortControllerRef.current?.signal.aborted) {
-        for (let countdown = 20; countdown > 0; countdown--) {
+        for (let countdown = 3; countdown > 0; countdown--) {
           setGenerationProgress(prev => ({
             ...prev,
             timeRemaining: countdown,
