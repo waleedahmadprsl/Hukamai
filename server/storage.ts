@@ -66,7 +66,7 @@ export class DatabaseStorage implements IStorage {
     return createdImage;
   }
 
-  async getGeneratedImages(limit: number = 100): Promise<GeneratedImage[]> {
+  async getGeneratedImages(limit: number = 100000): Promise<GeneratedImage[]> {
     return await db
       .select()
       .from(generatedImages)
@@ -125,7 +125,7 @@ export class DatabaseStorage implements IStorage {
     return historyEntry;
   }
 
-  async getPromptHistory(limit: number = 100): Promise<PromptHistory[]> {
+  async getPromptHistory(limit: number = 100000): Promise<PromptHistory[]> {
     return await db
       .select()
       .from(promptHistory)
